@@ -1,0 +1,143 @@
+const express = require('express')
+const app = express()
+const Submission=require('./model/submission')
+const Problem =require('./model/problem')
+var bodyParser = require('body-parser')
+const multer = require('multer');
+const cors = require('cors');
+const { spawnSync } = require('child_process');
+
+// const userCode = `
+// #include <iostream>
+// using namespace std;
+
+// int main() {
+//     int a, b;
+//     cin >> a >> b;
+//     cout << a + b << endl;
+//     return 0;
+// }
+// `;
+
+// const testCases = [
+//   { input: '2 3\n', expectedOutput: '5\n' },
+//   { input: '5 5\n', expectedOutput: '10\n' },
+//   // Add more test cases here
+// ];
+
+// function testCppCode(userCode, input, expectedOutput) {
+//   const compileResult = spawnSync('g++', ['-o', 'compiled_code', '-x', 'c++', '-'], { input: userCode, encoding: 'utf-8' });
+
+//   if (compileResult.status === 0) {
+//     const executeResult = spawnSync('./compiled_code', { input, encoding: 'utf-8' });
+//     const actualOutput = executeResult.stdout;
+
+//     return actualOutput.trim() === expectedOutput.trim();
+//   } else {
+//     return false; // Compilation error
+//   }
+// }
+
+// for (const { input, expectedOutput } of testCases) {
+//   const result = testCppCode(userCode, input, expectedOutput);
+
+//   if (result) {
+//     console.log('Test passed!');
+//   } else {
+//     console.log('Test failed.');
+//   }
+// }
+
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB (adjust as needed)
+  },
+});
+app.use(cors({
+  origin: 'http://localhost:3001', // Replace with your frontend's domain
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+}));
+
+app.use(bodyParser.json())
+Submission.sync();
+Problem.sync();
+app.get('/', function (req, res) {
+  res.send('Hello World')
+})
+// app.post('/create-user', async (req, res) => {
+//   try {
+//     const Problemtitle = req.body.title;
+//     const ProblemCategory = req.body.categories;
+//     const Problemcontent = req.body.content;
+//     // console.log(req.body);
+//     // if (!username || !email) {
+//     //   return res.status(400).json({ error: 'Both username and email are required' });
+//     // }
+
+//     // Save the user data to the database
+//     const newUser = await Problem.create({
+//      Problemtitle 
+//     ,ProblemCategory,
+//     Problemcontent,
+//     likes:0
+//   });
+//   console.log(newUser);
+//     return res.status(201).json(newUser);
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
+// app.get('/all-users', async (req, res) => {
+//   try {
+//     const allUsers = await Problem.findAll({});
+//     console.log(allUsers)
+//     return res.send(allUsers);
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
+// app.post('/upload', upload.single('file'), async (req, res) => {
+//   try {
+//     console.log(req.body);
+//     if (!req.body.image) {
+//       return res.status(400).json({ error: 'No image is provided' });
+//     }
+//     const imageBuffer = req.file.buffer;
+//     console.log(imageBuffer);
+//     const savedImage = await Problem.create({
+//       file: imageBuffer,
+//       Problemcontent :req.body.content,
+//       Problemtitle :req.body.content,
+//       likes :0,
+//       ProblemCategory :req.body.category[0],
+//     });
+
+//     return res.status(201).json({hdcg:'savedImage'});
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
+// app.get('/image/:id', async (req, res) => {
+//   res.setHeader('Content-Type', 'image/jpg');
+//   try {
+//     const imageId = req.params.id;
+// // console.log(imageId);
+//     // Retrieve the image data from the database
+//     const image = await Problem.findByPk(imageId);
+//     if (!image) {
+//       return res.status(404).json({ error: 'Image not found' });
+//     }
+//     console.log('image');
+//     res.send(image);
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
+app.listen(3000)
